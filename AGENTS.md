@@ -4,56 +4,68 @@
 
 Sentinel is an enterprise agent fleet for environmental intelligence. It enables organizations to securely deploy, manage, and monitor specialized AI agents that work autonomously with Earth and environmental data, while providing persistent memory, identity, governance, security, and end-to-end observability.
 
+## Repository
+
+https://github.com/albertic-ai/sentinel
+
 ## Project Structure
 
 ```
 sentinel/
-├── frontend/          # Next.js dashboard
-│   ├── app/           # Next.js App Router pages
-│   ├── components/    # React components
-│   │   └── ui/        # shadcn/ui primitives
-│   └── lib/           # Utilities
-├── backend/           # Backend service
+├── frontend/              # Next.js 16 dashboard
+│   ├── app/               # App Router pages
+│   │   ├── auth/          # Login, signup, forgot, reset, verify
+│   │   ├── console/       # Dashboard, agents, registry, memory, observability, connectors, settings, help
+│   │   └── legal/         # Terms, privacy, cookies
+│   ├── components/
+│   │   ├── app/           # AppHeader, AppFooter, AppLayout
+│   │   ├── console/       # ConsoleHeader, ConsoleLayout, ConsoleSidebar, SettingsSidebar
+│   │   └── ui/            # shadcn/ui primitives
+│   └── lib/               # Utilities
+├── backend/               # Python FastAPI + Google ADK
+│   ├── agents/            # ADK agent definitions
+│   │   ├── orchestrator/  # Root orchestrator (delegates to sub-agents)
+│   │   ├── wildfire/      # Wildfire Sentinel (NASA FIRMS)
+│   │   ├── air_quality/   # Air Quality Analyst (OpenAQ, OpenWeather)
+│   │   ├── deforestation/ # Deforestation Tracker (Sentinel Hub)
+│   │   └── compliance/    # Compliance Reporter (Memory Bank)
+│   ├── api/               # FastAPI route handlers
+│   ├── connectors/        # Environmental data source clients
+│   ├── gateway/           # Routing + Model Armor middleware
+│   ├── identity/          # Agent Identity + auth
+│   ├── memory/            # Memory Bank integration
+│   ├── models/            # Pydantic schemas
+│   ├── observability/     # OpenTelemetry + audit logging
+│   ├── registry/          # Agent Registry client
+│   └── tests/             # Test suite
+└── .github/workflows/     # CI/CD
 ```
 
 ## Rules
 
 - Always work within the correct subdirectory (`frontend/` or `backend/`)
-- Use TypeScript for all new code
-- Follow existing patterns and conventions in each package
-- Do not commit `.env.local` or `.vscode/` — they are gitignored
+- Frontend: TypeScript, Next.js App Router, shadcn/ui, Tailwind CSS v4
+- Backend: Python 3.12, FastAPI, Google ADK, async/await
+- Do not commit `.env.local` or `.vscode/`
 - Use `.env.example` as the template for environment variables
 - Run `npm run lint` before committing frontend changes
 - Follow Conventional Commits format for all commits
-
-## Frontend Commands
-
-```bash
-cd frontend
-npm install       # Install dependencies
-npm run dev       # Dev server (localhost:3000)
-npm run build     # Production build
-npm run lint      # Lint check
-```
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js (App Router), React, TypeScript, Tailwind CSS v4, shadcn/ui, Lucide React |
-| Backend | TBD |
-| Database | TBD |
-| Observability | TBD |
+- No mock data in committed code — use skeleton loading states
+- Light theme only (no dark mode)
+- Font: Google Sans Flex
 
 ## Code Style
 
-- Components: PascalCase (`AgentCard.tsx`)
-- Utilities: camelCase (`formatTimestamp.ts`)
-- Constants: UPPER_SNAKE_CASE
-- Types/Interfaces: PascalCase with descriptive names
-- Files: kebab-case for non-component files
+| Area | Convention |
+|------|-----------|
+| Frontend components | PascalCase (`AgentCard.tsx`) |
+| Frontend utilities | camelCase (`formatTimestamp.ts`) |
+| Frontend non-component files | kebab-case |
+| Python files | snake_case |
+| Constants | UPPER_SNAKE_CASE |
+| Types/Interfaces | PascalCase |
 
-## Security Considerations
+## Security
 
 - Never hardcode secrets or credentials
 - Validate all inputs at API boundaries

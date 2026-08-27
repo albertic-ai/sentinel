@@ -8,7 +8,8 @@
 - Each ADK agent has: `__init__.py`, `agent.py`, `tools.py`
 - Tools use `@tool` decorator from `google.adk`
 - Connectors are async httpx clients
-- All TODO comments indicate GEAP integration points
+- All integrations marked with `# TODO` are GEAP integration points
+- No mock data — return empty structures until wired up
 
 ## Code Style
 
