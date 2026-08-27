@@ -24,6 +24,17 @@ async def get_traces():
     return {"traces": demo_data.TRACES}
 
 
+@router.get("/traces/{trace_id}")
+async def get_trace(trace_id: str):
+    """Get a single trace by ID."""
+    from fastapi import HTTPException
+
+    trace = demo_data.trace_by_id(trace_id)
+    if not trace:
+        raise HTTPException(status_code=404, detail="Trace not found")
+    return trace
+
+
 @router.get("/audit")
 async def get_audit():
     """Get audit trail."""

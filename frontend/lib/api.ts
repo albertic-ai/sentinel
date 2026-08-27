@@ -175,6 +175,7 @@ export const api = {
 
   // Registry
   registry: () => request<{ agents: RegistryEntry[] }>("/api/registry/"),
+  registryEntry: (name: string) => request<RegistryEntry>(`/api/registry/${name}`),
 
   // Memory
   memory: () =>
@@ -183,13 +184,16 @@ export const api = {
     ),
   agentMemories: (name: string) =>
     request<{ agent: string; memories: MemoryEntry[] }>(`/api/memory/${name}`),
+  memoryEntry: (id: string) => request<MemoryEntry>(`/api/memory/entry/${id}`),
 
   // Connectors
   connectors: () => request<{ connectors: Connector[] }>("/api/connectors/"),
+  connector: (name: string) => request<Connector>(`/api/connectors/${encodeURIComponent(name)}`),
 
   // Observability
   logs: () => request<{ logs: LogEntry[] }>("/api/observability/logs"),
   traces: () => request<{ traces: Trace[] }>("/api/observability/traces"),
+  trace: (id: string) => request<Trace>(`/api/observability/traces/${id}`),
   audit: () => request<{ audit: AuditEntry[] }>("/api/observability/audit"),
 
   // Settings

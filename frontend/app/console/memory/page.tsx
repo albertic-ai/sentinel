@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ function timeAgo(iso: string): string {
 }
 
 export default function MemoryPage() {
+  const router = useRouter();
   const [counts, setCounts] = useState<{ agent: string; name: string; count: number }[] | null>(null);
   const [memories, setMemories] = useState<MemoryEntry[] | null>(null);
   const [query, setQuery] = useState("");
@@ -100,7 +102,11 @@ export default function MemoryPage() {
             ) : (
               <div className="space-y-3">
                 {filtered.map((m) => (
-                  <div key={m.id} className="space-y-1.5 rounded-md border p-4">
+                  <div
+                    key={m.id}
+                    className="cursor-pointer space-y-1.5 rounded-md border p-4 transition-colors hover:bg-muted/50"
+                    onClick={() => router.push(`/console/memory/${m.id}`)}
+                  >
                     <div className="flex items-center justify-between">
                       <Badge variant="secondary" className="text-xs">{m.agent}</Badge>
                       <span className="text-xs text-muted-foreground">{timeAgo(m.created_at)}</span>

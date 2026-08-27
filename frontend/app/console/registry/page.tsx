@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import {
 import { api, type RegistryEntry } from "@/lib/api";
 
 export default function RegistryPage() {
+  const router = useRouter();
   const [agents, setAgents] = useState<RegistryEntry[] | null>(null);
   const [query, setQuery] = useState("");
 
@@ -75,7 +77,11 @@ export default function RegistryPage() {
                     </TableRow>
                   ))
                 : filtered.map((a) => (
-                    <TableRow key={a.name}>
+                    <TableRow
+                      key={a.name}
+                      className="cursor-pointer"
+                      onClick={() => router.push(`/console/registry/${a.name}`)}
+                    >
                       <TableCell>
                         <div className="font-medium">{a.label}</div>
                         <div className="text-xs text-muted-foreground">{a.description}</div>
@@ -94,7 +100,16 @@ export default function RegistryPage() {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button size="sm" variant="outline">Deploy</Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/console/registry/${a.name}`);
+                          }}
+                        >
+                          Deploy
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}

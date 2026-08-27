@@ -260,3 +260,18 @@ DATA_SOURCE_CREDENTIALS = [
     {"name": "Sentinel Hub", "configured": True},
     {"name": "OpenWeather", "configured": True},
 ]
+
+
+# ------------------------------------------------------------
+# Detail lookups
+# ------------------------------------------------------------
+def trace_by_id(trace_id: str) -> dict | None:
+    return next((t for t in TRACES if t["id"] == trace_id), None)
+
+
+def connector_by_name(name: str) -> dict | None:
+    return next((c for c in CONNECTORS if c["name"] == name), None)
+
+
+def memory_by_id(memory_id: str) -> dict | None:
+    return next((m for m in MEMORIES if m["id"] == memory_id), None)

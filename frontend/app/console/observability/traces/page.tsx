@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +15,7 @@ function fmtTime(iso: string): string {
 }
 
 export default function TracesPage() {
+  const router = useRouter();
   const [traces, setTraces] = useState<Trace[] | null>(null);
   const [audit, setAudit] = useState<AuditEntry[] | null>(null);
 
@@ -41,7 +43,11 @@ export default function TracesPage() {
           {!traces
             ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-40 w-full" />)
             : traces.map((t) => (
-                <Card key={t.id}>
+                <Card
+                  key={t.id}
+                  className="cursor-pointer transition-colors hover:bg-muted/50"
+                  onClick={() => router.push(`/console/observability/traces/${t.id}`)}
+                >
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div>

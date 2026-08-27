@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,7 @@ function timeAgo(iso: string): string {
 }
 
 export default function ConnectorsPage() {
+  const router = useRouter();
   const [connectors, setConnectors] = useState<Connector[] | null>(null);
 
   useEffect(() => {
@@ -67,7 +69,11 @@ export default function ConnectorsPage() {
                     </TableRow>
                   ))
                 : connectors.map((c) => (
-                    <TableRow key={c.name}>
+                    <TableRow
+                      key={c.name}
+                      className="cursor-pointer"
+                      onClick={() => router.push(`/console/connectors/${encodeURIComponent(c.name)}`)}
+                    >
                       <TableCell>
                         <div className="font-medium">{c.name}</div>
                         <div className="text-xs text-muted-foreground">{c.description}</div>

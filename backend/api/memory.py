@@ -16,6 +16,17 @@ async def list_memories():
     }
 
 
+@router.get("/entry/{memory_id}")
+async def get_memory(memory_id: str):
+    """Get a single memory entry by ID."""
+    from fastapi import HTTPException
+
+    memory = demo_data.memory_by_id(memory_id)
+    if not memory:
+        raise HTTPException(status_code=404, detail="Memory not found")
+    return memory
+
+
 @router.get("/{agent_name}")
 async def get_agent_memories(agent_name: str):
     """Get memories for a specific agent."""
