@@ -7,11 +7,8 @@ class Settings(BaseSettings):
     """Sentinel backend settings."""
 
     # Application
-    app_name: str = "sentinel-backend"
     debug: bool = False
     port: int = 8080
-
-    # CORS
     cors_origins: list[str] = []
 
     # Google Cloud
@@ -21,10 +18,10 @@ class Settings(BaseSettings):
     # Vertex AI / Gemini
     gemini_model: str = ""
 
-    # Agent Registry
+    # GEAP — Agent Registry
     agent_registry_location: str = ""
 
-    # Memory Bank
+    # GEAP — Memory Bank
     memory_bank_id: str = ""
 
     # Firestore
