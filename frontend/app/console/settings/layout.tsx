@@ -9,9 +9,9 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
           Manage your account and platform configuration.
         </p>
       </div>
-      <div className="flex gap-8">
+      <div className="flex flex-col gap-6 md:flex-row md:gap-8">
         <SettingsSidebar />
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 min-w-0">{children}</div>
       </div>
     </div>
   );
