@@ -1,3 +1,6 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,10 +15,21 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { api, type Agent, type MemoryEntry } from "@/lib/api";
 
-export default async function AgentDetailPage(props: PageProps<"/console/agents/[agent_name]">) {
-  const { agent_name } = await props.params;
-  const displayName = agent_name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+export default function AgentDetailPage({
+  params,
+}: {
+  params: Promise<{ agent_name: string }>;
+}) {
+  const { agent_name } = use(params);
+  const [agent, setAgent] = useState<Agent | null>(null);
+  const [memories, setMemories] = useState<MemoryEntry[] | null>(null);
+
+  useEffect(() => {
+    api.agent(agent_name).then(setAgent).catch(() => setAgent(null));
+    api.agentMemories(agent_name).then((r) => setMemories(r.memories)).catch(() => setMemories([]));
+  }, [agent_name]);
 
   return (
     <div className="space-y-6">
@@ -30,7 +44,7 @@ export default async function AgentDetailPage(props: PageProps<"/console/agents/
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{displayName}</BreadcrumbPage>
+            <BreadcrumbPage>{agent?.label || agent_name}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -38,10 +52,12 @@ export default async function AgentDetailPage(props: PageProps<"/console/agents/
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold">{displayName}</h1>
-            <Badge variant="outline">
-              <Skeleton className="h-3 w-10" />
-            </Badge>
+            <h1 className="text-2xl font-semibold">{agent?.label || agent_name}</h1>
+            {agent && (
+              <Badge variant={agent.status === "active" ? "default" : "secondary"}>
+                {agent.status}
+              </Badge>
+            )}
           </div>
           <p className="font-mono text-sm text-muted-foreground">{agent_name}</p>
         </div>
@@ -56,66 +72,57 @@ export default async function AgentDetailPage(props: PageProps<"/console/agents/
       <Tabs defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="runs">Runs</TabsTrigger>
           <TabsTrigger value="memory">Memory</TabsTrigger>
           <TabsTrigger value="config">Config</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-4 space-y-4">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-5 w-16 rounded-full" />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Version</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-5 w-12" />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Last Run</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-5 w-24" />
-              </CardContent>
-            </Card>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { label: "Version", value: agent && `v${agent.version}` },
+              { label: "Total Runs", value: agent?.runs_total?.toLocaleString() },
+              { label: "Runs Today", value: agent?.runs_today },
+              { label: "Memories", value: agent?.memories },
+            ].map((s) => (
+              <Card key={s.label}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">{s.label}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {s.value === undefined || s.value === null ? (
+                    <Skeleton className="h-6 w-16" />
+                  ) : (
+                    <span className="text-xl font-bold">{s.value}</span>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
           <Card>
             <CardHeader>
               <CardTitle>Description</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="mt-2 h-4 w-3/4" />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="runs" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Run History</CardTitle>
-              <CardDescription>Previous executions of this agent</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-3 rounded-md border px-4 py-3">
-                    <Skeleton className="h-4 w-4 rounded-full" />
-                    <Skeleton className="h-4 w-48" />
-                    <Skeleton className="ml-auto h-5 w-16 rounded-full" />
+            <CardContent className="space-y-3">
+              {!agent ? (
+                <Skeleton className="h-4 w-full" />
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground">{agent.description}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {agent.capabilities.map((c) => (
+                      <Badge key={c} variant="secondary" className="text-xs">{c}</Badge>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <p className="text-sm">
+                    <span className="text-muted-foreground">Region:</span> {agent.region}
+                  </p>
+                  <p className="text-sm">
+                    <span className="text-muted-foreground">Data sources:</span>{" "}
+                    {agent.data_sources.join(", ")}
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -127,14 +134,24 @@ export default async function AgentDetailPage(props: PageProps<"/console/agents/
               <CardDescription>Persistent context from Memory Bank</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i} className="space-y-2 rounded-md border p-4">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
-                  </div>
-                ))}
-              </div>
+              {!memories ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
+                </div>
+              ) : memories.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No memories stored for this agent.</p>
+              ) : (
+                <div className="space-y-3">
+                  {memories.map((m) => (
+                    <div key={m.id} className="space-y-1 rounded-md border p-4">
+                      <p className="text-sm">{m.content}</p>
+                      <p className="text-xs text-muted-foreground">Session {m.session_id}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -146,12 +163,15 @@ export default async function AgentDetailPage(props: PageProps<"/console/agents/
               <CardDescription>Model, tools, and instructions</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="mt-4 h-32 w-full rounded-md" />
-              </div>
+              {!agent ? (
+                <Skeleton className="h-24 w-full" />
+              ) : (
+                <div className="space-y-2 text-sm">
+                  <p><span className="text-muted-foreground">Model:</span> {agent.model}</p>
+                  <p><span className="text-muted-foreground">Version:</span> v{agent.version}</p>
+                  <p><span className="text-muted-foreground">Status:</span> {agent.status}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

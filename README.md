@@ -139,15 +139,20 @@ gcloud run deploy sentinel-backend --source ./backend --region us-central1 --all
 | Endpoint | Description |
 |----------|-------------|
 | `GET /health` | Health check |
+| `POST /api/auth/login` | Log in, returns JWT |
+| `POST /api/auth/register` | Register a new user |
+| `GET /api/auth/me` | Current user |
 | `GET /api/agents` | List agents |
 | `GET /api/agents/{name}` | Agent detail |
-| `POST /api/agents/{name}/run` | Execute agent |
-| `GET /api/fleet/status` | Fleet status |
-| `GET /api/fleet/health` | Fleet health |
-| `GET /api/memory/{agent}` | Agent memories |
-| `POST /api/memory/{agent}/generate` | Generate memories |
+| `GET /api/fleet/dashboard` | Dashboard stats, health, activity, alerts |
 | `GET /api/registry` | List registered agents |
-| `GET /api/registry/discover` | Discover agents |
+| `GET /api/memory` | Memories and per-agent counts |
+| `GET /api/connectors` | Data source connectors |
+| `GET /api/observability/logs` | Structured logs |
+| `GET /api/observability/traces` | Reasoning traces |
+| `GET /api/observability/audit` | Audit trail |
+| `GET /api/settings/organization` | Organization and members |
+| `GET /api/settings/credentials` | Data source credentials |
 
 ## Documentation
 

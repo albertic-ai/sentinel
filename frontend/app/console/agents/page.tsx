@@ -1,8 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Bot } from "lucide-react";
 import {
   Table,
@@ -12,59 +16,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-function AgentTableSkeleton() {
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Data Sources</TableHead>
-          <TableHead>Last Active</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {Array.from({ length: 4 }).map((_, i) => (
-          <TableRow key={i}>
-            <TableCell>
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-8 w-8 rounded-md" />
-                <div className="space-y-1">
-                  <Skeleton className="h-4 w-28" />
-                  <Skeleton className="h-3 w-36" />
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-5 w-14 rounded-full" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-5 w-20 rounded-full" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-16" />
-            </TableCell>
-            <TableCell className="text-right">
-              <Skeleton className="ml-auto h-8 w-16 rounded-md" />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}
+import { api, type Agent } from "@/lib/api";
 
 export default function AgentsPage() {
+  const [agents, setAgents] = useState<Agent[] | null>(null);
+
+  useEffect(() => {
+    api.agents().then((r) => setAgents(r.agents)).catch(() => setAgents([]));
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Agents</h1>
-          <p className="text-muted-foreground">
-            Manage and monitor your deployed agents.
-          </p>
+          <p className="text-muted-foreground">Manage and monitor your deployed agents.</p>
         </div>
         <Button size="sm">
           <Bot className="mr-2 h-4 w-4" />
@@ -76,7 +42,47 @@ export default function AgentsPage() {
 
       <Card>
         <CardContent className="p-0">
-          <AgentTableSkeleton />
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Region</TableHead>
+                <TableHead>Runs Today</TableHead>
+                <TableHead>Version</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {!agents
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell colSpan={5}>
+                        <Skeleton className="h-8 w-full" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : agents.map((a) => (
+                    <TableRow key={a.name} className="cursor-pointer">
+                      <TableCell>
+                        <Link href={`/console/agents/${a.name}`} className="block">
+                          <div className="font-medium">{a.label}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {a.data_sources.join(" · ")}
+                          </div>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={a.status === "active" ? "default" : "secondary"}>
+                          {a.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm">{a.region}</TableCell>
+                      <TableCell className="text-sm">{a.runs_today}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">v{a.version}</TableCell>
+                    </TableRow>
+                  ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

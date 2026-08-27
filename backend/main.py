@@ -4,7 +4,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
-from api import agents, auth, fleet, memory, registry
+from api import (
+    agents,
+    auth,
+    connectors,
+    fleet,
+    memory,
+    observability,
+    registry,
+    settings as settings_api,
+)
 from observability.tracing import setup_tracing
 
 app = FastAPI(
@@ -32,6 +41,9 @@ app.include_router(agents.router, prefix="/api/agents", tags=["agents"])
 app.include_router(fleet.router, prefix="/api/fleet", tags=["fleet"])
 app.include_router(memory.router, prefix="/api/memory", tags=["memory"])
 app.include_router(registry.router, prefix="/api/registry", tags=["registry"])
+app.include_router(connectors.router, prefix="/api/connectors", tags=["connectors"])
+app.include_router(observability.router, prefix="/api/observability", tags=["observability"])
+app.include_router(settings_api.router, prefix="/api/settings", tags=["settings"])
 
 
 @app.get("/health")

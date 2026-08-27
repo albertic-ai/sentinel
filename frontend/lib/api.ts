@@ -63,7 +63,90 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json();
 }
 
+// ---- Data types ----
+export interface Agent {
+  name: string;
+  label: string;
+  description: string;
+  status: string;
+  version: string;
+  model: string;
+  data_sources: string[];
+  capabilities: string[];
+  last_active: string;
+  runs_total: number;
+  runs_today: number;
+  memories: number;
+  region: string;
+}
+
+export interface DashboardData {
+  stats: { total_agents: number; active_tasks: number; memories: number; alerts: number };
+  health: { name: string; label: string; health: string; last_active: string }[];
+  activity: { agent: string; action: string; time: string; level: string }[];
+  alerts: { id: string; agent: string; severity: string; message: string; time: string }[];
+}
+
+export interface RegistryEntry {
+  name: string;
+  label: string;
+  version: string;
+  description: string;
+  owner: string;
+  capabilities: string[];
+  status: string;
+}
+
+export interface MemoryEntry {
+  id: string;
+  agent: string;
+  content: string;
+  created_at: string;
+  session_id: string;
+}
+
+export interface Connector {
+  name: string;
+  description: string;
+  status: string;
+  used_by: string[];
+  last_sync: string;
+}
+
+export interface LogEntry {
+  timestamp: string;
+  level: string;
+  agent: string;
+  message: string;
+}
+
+export interface Trace {
+  id: string;
+  agent: string;
+  query: string;
+  duration_ms: number;
+  status: string;
+  time: string;
+  steps: { step: string; detail: string }[];
+}
+
+export interface AuditEntry {
+  timestamp: string;
+  agent: string;
+  action: string;
+  user: string;
+  result: string;
+}
+
+export interface Organization {
+  name: string;
+  domain: string;
+  region: string;
+  members: { name: string; email: string; role: string }[];
+}
+
 export const api = {
+  // Auth
   login: (email: string, password: string) =>
     request<AuthResponse>("/api/auth/login", {
       method: "POST",
@@ -82,4 +165,35 @@ export const api = {
     }),
 
   me: () => request<User>("/api/auth/me"),
+
+  // Dashboard & fleet
+  dashboard: () => request<DashboardData>("/api/fleet/dashboard"),
+
+  // Agents
+  agents: () => request<{ agents: Agent[] }>("/api/agents/"),
+  agent: (name: string) => request<Agent>(`/api/agents/${name}`),
+
+  // Registry
+  registry: () => request<{ agents: RegistryEntry[] }>("/api/registry/"),
+
+  // Memory
+  memory: () =>
+    request<{ counts: { agent: string; name: string; count: number }[]; memories: MemoryEntry[] }>(
+      "/api/memory/"
+    ),
+  agentMemories: (name: string) =>
+    request<{ agent: string; memories: MemoryEntry[] }>(`/api/memory/${name}`),
+
+  // Connectors
+  connectors: () => request<{ connectors: Connector[] }>("/api/connectors/"),
+
+  // Observability
+  logs: () => request<{ logs: LogEntry[] }>("/api/observability/logs"),
+  traces: () => request<{ traces: Trace[] }>("/api/observability/traces"),
+  audit: () => request<{ audit: AuditEntry[] }>("/api/observability/audit"),
+
+  // Settings
+  organization: () => request<Organization>("/api/settings/organization"),
+  credentials: () =>
+    request<{ credentials: { name: string; configured: boolean }[] }>("/api/settings/credentials"),
 };

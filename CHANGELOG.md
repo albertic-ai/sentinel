@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Frontend deployed to Cloud Run
 - Gemini 3.5 Flash via Vertex AI
 - Environmental data connectors (NASA FIRMS, OpenAQ, Sentinel Hub, OpenWeather)
+- Demo data across all console endpoints (dashboard, agents, registry, memory, connectors, observability, settings)
+- Console and settings pages wired to live backend API with loading states
 - Root-level documentation: README, LICENSE (MIT), SECURITY, CODE_OF_CONDUCT, CONTRIBUTING, ROADMAP, CHANGELOG
 - Environment variable management (.env.example template, .env.local gitignored)
 - Agent and AI context files (AGENTS.md, CLAUDE.md)

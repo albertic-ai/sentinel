@@ -1,17 +1,32 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { api, type Trace, type AuditEntry } from "@/lib/api";
+
+function fmtTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString();
+}
 
 export default function TracesPage() {
+  const [traces, setTraces] = useState<Trace[] | null>(null);
+  const [audit, setAudit] = useState<AuditEntry[] | null>(null);
+
+  useEffect(() => {
+    api.traces().then((r) => setTraces(r.traces)).catch(() => setTraces([]));
+    api.audit().then((r) => setAudit(r.audit)).catch(() => setAudit([]));
+  }, []);
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Traces</h1>
-        <p className="text-muted-foreground">
-          End-to-end reasoning chain traces for agent decisions.
-        </p>
+        <p className="text-muted-foreground">End-to-end reasoning chain traces for agent decisions.</p>
       </div>
 
       <Separator />
@@ -22,60 +37,73 @@ export default function TracesPage() {
           <TabsTrigger value="audit">Audit Trail</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="traces" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Reasoning Traces</CardTitle>
-              <CardDescription>
-                Visual representation of agent decision-making, tool calls, and
-                sub-agent delegations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-64">
-                <div className="space-y-3">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="rounded-md border p-4">
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="h-6 w-6 rounded-full" />
-                        <Skeleton className="h-4 w-40" />
-                        <Skeleton className="ml-auto h-5 w-16 rounded-full" />
+        <TabsContent value="traces" className="mt-4 space-y-4">
+          {!traces
+            ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-40 w-full" />)
+            : traces.map((t) => (
+                <Card key={t.id}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base">{t.query}</CardTitle>
+                        <CardDescription>
+                          {t.agent} · {t.duration_ms}ms · {fmtTime(t.time)}
+                        </CardDescription>
                       </div>
-                      <div className="ml-9 mt-2 space-y-1.5">
-                        <Skeleton className="h-3 w-full" />
-                        <Skeleton className="h-3 w-3/4" />
-                      </div>
+                      <Badge variant={t.status === "success" ? "default" : "destructive"}>
+                        {t.status}
+                      </Badge>
                     </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+                  </CardHeader>
+                  <CardContent>
+                    <ol className="space-y-2">
+                      {t.steps.map((s, i) => (
+                        <li key={i} className="flex gap-3 text-sm">
+                          <Badge variant="outline" className="shrink-0 text-xs">
+                            {s.step}
+                          </Badge>
+                          <span className="text-muted-foreground">{s.detail}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </CardContent>
+                </Card>
+              ))}
         </TabsContent>
 
         <TabsContent value="audit" className="mt-4">
           <Card>
             <CardHeader>
               <CardTitle>Audit Trail</CardTitle>
-              <CardDescription>
-                Complete audit log of all agent actions for compliance
-              </CardDescription>
+              <CardDescription>Complete audit log of all agent actions for compliance</CardDescription>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-64">
-                <div className="space-y-2">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 rounded-md border px-4 py-2"
-                    >
-                      <Skeleton className="h-3 w-20" />
-                      <Skeleton className="h-5 w-14 rounded-full" />
-                      <Skeleton className="h-3 w-24" />
-                      <Skeleton className="h-3 flex-1" />
-                    </div>
-                  ))}
-                </div>
+              <ScrollArea className="h-80">
+                {!audit ? (
+                  <div className="space-y-2">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <Skeleton key={i} className="h-10 w-full" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-2 text-sm">
+                    {audit.map((a, i) => (
+                      <div key={i} className="flex items-center gap-3 rounded-md border px-3 py-2">
+                        <span className="shrink-0 text-xs text-muted-foreground">
+                          {fmtTime(a.timestamp)}
+                        </span>
+                        <Badge variant="secondary" className="shrink-0 text-xs">{a.agent}</Badge>
+                        <span className="font-mono text-xs">{a.action}</span>
+                        <Badge
+                          variant={a.result === "success" ? "default" : "outline"}
+                          className="ml-auto shrink-0 text-xs"
+                        >
+                          {a.result}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </CardContent>
           </Card>

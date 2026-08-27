@@ -2,28 +2,29 @@
 
 from fastapi import APIRouter
 
+import demo_data
+
 router = APIRouter()
 
 
 @router.get("/status")
 async def fleet_status():
     """Get overall fleet status."""
-    return {
-        "total_agents": 4,
-        "active": 4,
-        "idle": 0,
-        "errored": 0,
-    }
+    return demo_data.fleet_status()
 
 
 @router.get("/health")
 async def fleet_health():
     """Get fleet health metrics."""
+    return demo_data.fleet_health()
+
+
+@router.get("/dashboard")
+async def dashboard():
+    """Get dashboard stats, activity, and alerts."""
     return {
-        "agents": [
-            {"name": "wildfire_sentinel", "health": "healthy", "last_active": None},
-            {"name": "air_quality_analyst", "health": "healthy", "last_active": None},
-            {"name": "deforestation_tracker", "health": "healthy", "last_active": None},
-            {"name": "compliance_reporter", "health": "healthy", "last_active": None},
-        ]
+        "stats": demo_data.dashboard_stats(),
+        "health": demo_data.fleet_health()["agents"],
+        "activity": demo_data.RECENT_ACTIVITY,
+        "alerts": demo_data.ALERTS,
     }

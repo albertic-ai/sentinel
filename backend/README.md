@@ -126,6 +126,24 @@ available for testing without a database connection:
 
 Registered users (via `/api/auth/register`) are stored in Firestore.
 
+## Demo Data
+
+`demo_data.py` provides realistic sample data served across all console
+endpoints (dashboard, agents, registry, memory, connectors, observability,
+settings) for demonstration and testing.
+
+Additional endpoints:
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/fleet/dashboard` | Dashboard stats, fleet health, activity, alerts |
+| GET | `/api/connectors` | List data source connectors |
+| GET | `/api/observability/logs` | Structured logs (filter by agent/level) |
+| GET | `/api/observability/traces` | Reasoning chain traces |
+| GET | `/api/observability/audit` | Audit trail |
+| GET | `/api/settings/organization` | Organization details and members |
+| GET | `/api/settings/credentials` | Data source credential status |
+
 ## Deploy to Cloud Run
 
 ```bash

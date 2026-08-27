@@ -2,21 +2,21 @@
 
 from fastapi import APIRouter
 
-from memory.bank import MemoryBankClient
+import demo_data
 
 router = APIRouter()
 
 
+@router.get("/")
+async def list_memories():
+    """List all memories and per-agent counts."""
+    return {
+        "counts": demo_data.memory_counts(),
+        "memories": demo_data.MEMORIES,
+    }
+
+
 @router.get("/{agent_name}")
-async def get_agent_memories(agent_name: str, days: int = 30):
+async def get_agent_memories(agent_name: str):
     """Get memories for a specific agent."""
-    client = MemoryBankClient()
-    return await client.get_agent_memories(agent_name, days)
-
-
-@router.post("/{agent_name}/generate")
-async def generate_memories(agent_name: str, session_id: str):
-    """Generate memories from a session."""
-    client = MemoryBankClient()
-    memory_ids = await client.generate_memories(session_id)
-    return {"generated": memory_ids}
+    return {"agent": agent_name, "memories": demo_data.memories_for_agent(agent_name)}
