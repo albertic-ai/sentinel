@@ -7,6 +7,7 @@ from config import settings
 from api import (
     agents,
     auth,
+    chat,
     connectors,
     fleet,
     memory,
@@ -44,6 +45,7 @@ app.include_router(registry.router, prefix="/api/registry", tags=["registry"])
 app.include_router(connectors.router, prefix="/api/connectors", tags=["connectors"])
 app.include_router(observability.router, prefix="/api/observability", tags=["observability"])
 app.include_router(settings_api.router, prefix="/api/settings", tags=["settings"])
+app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 
 
 @app.get("/health")

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Bot,
+  MessageSquare,
   BookOpen,
   Brain,
   Activity,
@@ -19,6 +20,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const navItems = [
   { href: "/console/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/console/chat", label: "Chat", icon: MessageSquare },
   { href: "/console/agents", label: "Agents", icon: Bot },
   { href: "/console/registry", label: "Registry", icon: BookOpen },
   { href: "/console/memory", label: "Memory", icon: Brain },

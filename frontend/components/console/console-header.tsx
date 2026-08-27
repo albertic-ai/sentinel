@@ -10,9 +10,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   LayoutDashboard,
   Bot,
+  MessageSquare,
   BookOpen,
   Brain,
-  Activity,
   FileText,
   GitBranch,
   Plug,
@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/console/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/console/chat", label: "Chat", icon: MessageSquare },
   { href: "/console/agents", label: "Agents", icon: Bot },
   { href: "/console/registry", label: "Registry", icon: BookOpen },
   { href: "/console/memory", label: "Memory", icon: Brain },

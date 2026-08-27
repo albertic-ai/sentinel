@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expiry_hours: int = 24
 
+    # Gemini API (chat via GenKit)
+    gemini_api_key: str = ""
+
     class Config:
         env_file = ".env.local"
         env_file_encoding = "utf-8"

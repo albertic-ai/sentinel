@@ -200,4 +200,24 @@ export const api = {
   organization: () => request<Organization>("/api/settings/organization"),
   credentials: () =>
     request<{ credentials: { name: string; configured: boolean }[] }>("/api/settings/credentials"),
+
+  // Chat
+  chatAgents: () =>
+    request<{ agents: { name: string; label: string }[] }>("/api/chat/agents"),
+  chat: (agent: string, message: string, history: ChatTurn[]) =>
+    request<ChatReply>("/api/chat/", {
+      method: "POST",
+      body: JSON.stringify({ agent, message, history }),
+    }),
 };
+
+export interface ChatTurn {
+  role: "user" | "agent";
+  content: string;
+}
+
+export interface ChatReply {
+  reply: string;
+  agent: string;
+  powered_by: string;
+}
