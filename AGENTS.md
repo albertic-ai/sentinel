@@ -8,17 +8,12 @@ Sentinel is an enterprise agent fleet for environmental intelligence. It enables
 
 ```
 sentinel/
-├── frontend/          # Next.js dashboard (fleet management UI)
+├── frontend/          # Next.js dashboard
 │   ├── app/           # Next.js App Router pages
 │   ├── components/    # React components
 │   │   └── ui/        # shadcn/ui primitives
 │   └── lib/           # Utilities
-├── backend/           # API and agent orchestration service
-│   ├── agents/        # Agent definitions and capabilities
-│   ├── memory/        # Persistent memory layer
-│   ├── governance/    # Policy engine and access control
-│   ├── observability/ # Logging, metrics, tracing
-│   └── integrations/  # Environmental data connectors
+├── backend/           # Backend service
 ```
 
 ## Rules
@@ -30,17 +25,6 @@ sentinel/
 - Use `.env.example` as the template for environment variables
 - Run `npm run lint` before committing frontend changes
 - Follow Conventional Commits format for all commits
-
-## Domain Context
-
-| Concept | Description |
-|---------|-------------|
-| Agent | Autonomous AI unit with identity, memory, and environmental capabilities |
-| Fleet | Collection of agents under shared governance policies |
-| Memory | Persistent contextual storage for agent knowledge |
-| Governance | Policy engine constraining agent behavior and access |
-| Connector | Integration with an environmental data source |
-| Observability | Logging, metrics, traces, and alerts for fleet operations |
 
 ## Frontend Commands
 
@@ -58,21 +42,19 @@ npm run lint      # Lint check
 |-------|-----------|
 | Frontend | Next.js (App Router), React, TypeScript, Tailwind CSS v4, shadcn/ui, Lucide React |
 | Backend | TBD |
-| Database | TBD (PostgreSQL + vector store) |
-| Observability | TBD (OpenTelemetry) |
+| Database | TBD |
+| Observability | TBD |
 
 ## Code Style
 
 - Components: PascalCase (`AgentCard.tsx`)
 - Utilities: camelCase (`formatTimestamp.ts`)
 - Constants: UPPER_SNAKE_CASE
-- Types/Interfaces: PascalCase with descriptive names (`AgentConfig`, `FleetPolicy`)
+- Types/Interfaces: PascalCase with descriptive names
 - Files: kebab-case for non-component files
 
 ## Security Considerations
 
 - Never hardcode secrets or credentials
-- Agent operations must be auditable
-- Follow least-privilege for agent capabilities
 - Validate all inputs at API boundaries
 - Use parameterized queries for database access
