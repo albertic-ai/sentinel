@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -12,44 +12,61 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bot, Send, User } from "lucide-react";
+import { Bot, Send, User, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api, type ChatTurn } from "@/lib/api";
 
+interface ChatAgent {
+  name: string;
+  label: string;
+  suggestions: string[];
+}
+
 export default function ChatPage() {
-  const [agents, setAgents] = useState<{ name: string; label: string }[]>([]);
+  const [agents, setAgents] = useState<ChatAgent[]>([]);
   const [agent, setAgent] = useState("sentinel_orchestrator");
   const [messages, setMessages] = useState<ChatTurn[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    api.chatAgents().then((r) => setAgents(r.agents)).catch(() => setAgents([]));
+    api
+      .chatAgents()
+      .then((r) => setAgents(r.agents))
+      .catch(() => setError("Could not load agents. The chat service may be unavailable."));
   }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
-  async function send(e: React.FormEvent) {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text || loading) return;
+  const currentAgent = agents.find((a) => a.name === agent);
+  const suggestions = currentAgent?.suggestions ?? [];
 
-    const userTurn: ChatTurn = { role: "user", content: text };
+  async function sendMessage(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed || loading) return;
+
+    setError("");
+    const userTurn: ChatTurn = { role: "user", content: trimmed };
     const nextMessages = [...messages, userTurn];
     setMessages(nextMessages);
     setInput("");
     setLoading(true);
 
     try {
-      const res = await api.chat(agent, text, messages);
+      const res = await api.chat(agent, trimmed, messages);
       setMessages([...nextMessages, { role: "agent", content: res.reply }]);
     } catch {
+      setError("Failed to reach the agent. Please try again.");
       setMessages([
         ...nextMessages,
-        { role: "agent", content: "Sorry, something went wrong. Please try again." },
+        {
+          role: "agent",
+          content: "Sorry, I couldn't process that request. Please try again in a moment.",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -77,15 +94,40 @@ export default function ChatPage() {
         </Select>
       </div>
 
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="flex flex-1 flex-col overflow-hidden rounded-lg border">
         <ScrollArea className="flex-1 p-4" ref={scrollRef}>
           {messages.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground">
-              <Bot className="mb-3 h-10 w-10" />
-              <p className="text-sm">Start a conversation with the agent fleet.</p>
-              <p className="mt-1 text-xs">
-                Try: &quot;Check wildfire risk near Sierra Nevada&quot;
+            <div className="flex h-full flex-col items-center justify-center text-center">
+              <Bot className="mb-3 h-10 w-10 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">
+                Start a conversation with{" "}
+                <span className="font-medium text-foreground">
+                  {currentAgent?.label || "the agent fleet"}
+                </span>
               </p>
+              {suggestions.length > 0 && (
+                <div className="mt-6 flex max-w-md flex-col gap-2">
+                  <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Try asking
+                  </div>
+                  {suggestions.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => sendMessage(s)}
+                      className="rounded-md border bg-background px-4 py-2 text-sm transition-colors hover:bg-muted"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -104,7 +146,7 @@ export default function ChatPage() {
                   )}
                   <div
                     className={cn(
-                      "max-w-[75%] rounded-lg px-4 py-2 text-sm",
+                      "max-w-[75%] whitespace-pre-wrap rounded-lg px-4 py-2 text-sm",
                       m.role === "user"
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted"
@@ -133,7 +175,29 @@ export default function ChatPage() {
           )}
         </ScrollArea>
 
-        <form onSubmit={send} className="flex gap-2 border-t p-4">
+        {/* Quick suggestions when a conversation is active */}
+        {messages.length > 0 && suggestions.length > 0 && (
+          <div className="flex flex-wrap gap-2 border-t px-4 py-2">
+            {suggestions.slice(0, 2).map((s) => (
+              <button
+                key={s}
+                onClick={() => sendMessage(s)}
+                disabled={loading}
+                className="rounded-full border px-3 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted disabled:opacity-50"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            sendMessage(input);
+          }}
+          className="flex gap-2 border-t p-4"
+        >
           <Input
             placeholder="Ask the agent fleet..."
             value={input}

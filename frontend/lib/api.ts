@@ -203,7 +203,9 @@ export const api = {
 
   // Chat
   chatAgents: () =>
-    request<{ agents: { name: string; label: string }[] }>("/api/chat/agents"),
+    request<{ agents: { name: string; label: string; suggestions: string[] }[] }>(
+      "/api/chat/agents"
+    ),
   chat: (agent: string, message: string, history: ChatTurn[]) =>
     request<ChatReply>("/api/chat/", {
       method: "POST",

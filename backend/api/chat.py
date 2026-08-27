@@ -25,12 +25,45 @@ class ChatResponse(BaseModel):
     powered_by: str
 
 
+SUGGESTIONS = {
+    "sentinel_orchestrator": [
+        "Check wildfire risk near Sierra Nevada",
+        "What's the air quality in Delhi today?",
+        "Any deforestation alerts in the Amazon?",
+    ],
+    "wildfire_sentinel": [
+        "Are there active fires near 36.7, -119.4?",
+        "Compare current hotspots to the 30-day baseline",
+        "What's the fire risk this week?",
+    ],
+    "air_quality_analyst": [
+        "What's the AQI in Delhi right now?",
+        "Forecast pollution for the next 48 hours",
+        "Is it safe for outdoor activity today?",
+    ],
+    "deforestation_tracker": [
+        "Show forest cover change in Amazon sector 7",
+        "What's the NDVI trend this quarter?",
+        "Detect land-use changes near road networks",
+    ],
+    "compliance_reporter": [
+        "Generate a Q3 compliance summary",
+        "Which EPA thresholds were exceeded?",
+        "Show the 90-day environmental trend",
+    ],
+}
+
+
 @router.get("/agents")
 async def chat_agents():
-    """List agents available for chat."""
+    """List agents available for chat with suggested prompts."""
     return {
         "agents": [
-            {"name": name, "label": name.replace("_", " ").title()}
+            {
+                "name": name,
+                "label": name.replace("_", " ").title(),
+                "suggestions": SUGGESTIONS.get(name, []),
+            }
             for name in AGENT_PROMPTS
         ]
     }

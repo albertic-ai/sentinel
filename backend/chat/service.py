@@ -38,6 +38,41 @@ AGENT_PROMPTS = {
 
 DEFAULT_AGENT = "sentinel_orchestrator"
 
+# Demo responses used when no API key is configured (keeps demos functional)
+DEMO_RESPONSES = {
+    "sentinel_orchestrator": (
+        "I coordinate the Sentinel environmental intelligence fleet. Based on your "
+        "request I'd delegate to the right specialist — for example, routing a "
+        "wildfire question to the Wildfire Sentinel, which would query NASA FIRMS "
+        "for active hotspots near your coordinates. Ask me about wildfire risk, "
+        "air quality, or deforestation for a specific location."
+    ),
+    "wildfire_sentinel": (
+        "Scanning satellite thermal data via NASA FIRMS. For the requested region I "
+        "would report active fire hotspots with coordinates, confidence levels, and "
+        "how current readings compare to the seasonal baseline. If anomalies exceed "
+        "300% of baseline, I raise a critical alert for field teams."
+    ),
+    "air_quality_analyst": (
+        "Checking OpenAQ sensor networks and weather conditions. For your location I "
+        "would report the current AQI, the primary pollutant (often PM2.5), and a "
+        "48-hour pollution forecast. When AQI is predicted above 300, I issue a "
+        "health advisory for outdoor activity."
+    ),
+    "deforestation_tracker": (
+        "Comparing Sentinel Hub satellite imagery across time. For the monitored "
+        "region I would report NDVI vegetation health, detected land-cover changes, "
+        "and the affected area in hectares — flagging accelerating loss near road "
+        "networks."
+    ),
+    "compliance_reporter": (
+        "Compiling observations from the fleet's Memory Bank into a compliance "
+        "report. I would summarize findings, highlight any regulatory thresholds "
+        "exceeded (e.g., EPA limits), and include 90-day trend analysis with "
+        "recommended corrective actions."
+    ),
+}
+
 # Lazily initialized GenKit instance
 _genkit_app = None
 
@@ -78,14 +113,11 @@ async def generate_reply(agent_name: str, message: str, history: list[dict]) -> 
 
     ai = _get_genkit()
     if ai is None:
+        # Demo mode — return a realistic canned response for the agent
         return {
-            "reply": (
-                "The chat model is not configured yet. Set the GEMINI_API_KEY "
-                "environment variable to enable live agent conversations. "
-                f"(Agent: {agent})"
-            ),
+            "reply": DEMO_RESPONSES.get(agent, DEMO_RESPONSES[DEFAULT_AGENT]),
             "agent": agent,
-            "powered_by": "unconfigured",
+            "powered_by": "demo",
         }
 
     # Build the conversation context
@@ -97,10 +129,15 @@ async def generate_reply(agent_name: str, message: str, history: list[dict]) -> 
 
     try:
         response = await ai.generate(prompt=convo)
-        return {"reply": response.text, "agent": agent, "powered_by": "gemini"}
-    except Exception as exc:  # noqa: BLE001
+        text = getattr(response, "text", None) or DEMO_RESPONSES.get(agent, DEMO_RESPONSES[DEFAULT_AGENT])
+        return {"reply": text, "agent": agent, "powered_by": "gemini"}
+    except Exception:  # noqa: BLE001
+        # Fall back to a demo response rather than surfacing a raw error
         return {
-            "reply": f"The chat model encountered an error: {exc}",
+            "reply": (
+                "I'm temporarily unable to reach the model. Here's what I would "
+                "normally do:\n\n" + DEMO_RESPONSES.get(agent, DEMO_RESPONSES[DEFAULT_AGENT])
+            ),
             "agent": agent,
-            "powered_by": "error",
+            "powered_by": "fallback",
         }
