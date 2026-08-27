@@ -10,6 +10,9 @@ node_modules/
 .vscode/
 .idea/
 
+# Kiro AI context (local only)
+.kiro/
+
 # OS
 .DS_Store
 Thumbs.db
