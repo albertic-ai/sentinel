@@ -102,6 +102,9 @@ API available at http://localhost:8080
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/health` | Health check |
+| POST | `/api/auth/login` | Log in, returns JWT |
+| POST | `/api/auth/register` | Register a new user |
+| GET | `/api/auth/me` | Get current user (requires Bearer token) |
 | GET | `/api/agents` | List all agents |
 | GET | `/api/agents/{name}` | Get agent details |
 | POST | `/api/agents/{name}/run` | Execute an agent |
@@ -112,6 +115,16 @@ API available at http://localhost:8080
 | GET | `/api/registry` | List registered agents |
 | GET | `/api/registry/discover?query=` | Discover agents |
 | GET | `/api/registry/{name}` | Get registry entry |
+
+## Authentication
+
+Auth uses JWT tokens with bcrypt password hashing. A built-in demo user is
+available for testing without a database connection:
+
+- **Email:** `demo@sentinel.com`
+- **Password:** `Password@123`
+
+Registered users (via `/api/auth/register`) are stored in Firestore.
 
 ## Deploy to Cloud Run
 

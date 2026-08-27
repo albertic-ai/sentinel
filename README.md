@@ -78,6 +78,30 @@ cp .env.example .env.local
 
 See `.env.example` at root and in each subdirectory for all available variables.
 
+## Live Demo
+
+Both services are deployed on Google Cloud Run:
+
+- **Frontend:** https://sentinel-frontend-429151084374.us-central1.run.app
+- **Backend:** https://sentinel-backend-429151084374.us-central1.run.app
+
+**Demo credentials:**
+
+- Email: `demo@sentinel.com`
+- Password: `Password@123`
+
+## Deployment
+
+Both services deploy to Cloud Run directly from source:
+
+```bash
+# Frontend
+gcloud run deploy sentinel-frontend --source ./frontend --region us-central1 --allow-unauthenticated
+
+# Backend
+gcloud run deploy sentinel-backend --source ./backend --region us-central1 --allow-unauthenticated
+```
+
 ## Routes
 
 ### Frontend Pages

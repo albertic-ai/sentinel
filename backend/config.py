@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     # Application
     debug: bool = False
     port: int = 8080
-    cors_origins: list[str] = []
+    cors_origins: str = ""
 
     # Google Cloud
     gcp_project_id: str = ""
@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     sentinel_hub_client_id: str = ""
     sentinel_hub_client_secret: str = ""
     openweather_api_key: str = ""
+
+    # Auth / JWT
+    jwt_secret: str = ""
+    jwt_algorithm: str = "HS256"
+    jwt_expiry_hours: int = 24
 
     class Config:
         env_file = ".env.local"

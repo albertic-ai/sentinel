@@ -1,5 +1,12 @@
 # Dependencies
 node_modules/
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
 
 # Environment
 .env
