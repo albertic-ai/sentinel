@@ -7,7 +7,7 @@ API and agent orchestration service built with Python, FastAPI, and Google ADK.
 - Python 3.12
 - FastAPI + Uvicorn
 - Google ADK (Agent Development Kit)
-- Gemini 2.5 Flash via Vertex AI
+- Gemini 3.5 Flash via Vertex AI
 - Google Cloud (Cloud Run, Firestore, Pub/Sub)
 - OpenTelemetry for observability
 - httpx for async HTTP

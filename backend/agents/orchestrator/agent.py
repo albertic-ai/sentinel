@@ -13,7 +13,7 @@ from agents.compliance.agent import compliance_agent
 
 orchestrator_agent = Agent(
     name="sentinel_orchestrator",
-    model="gemini-2.5-flash",
+    model="gemini-3.5-flash",
     description="Root orchestrator for the Sentinel environmental intelligence fleet.",
     instruction="""You are the Sentinel Orchestrator, the central coordinator for an
 environmental intelligence agent fleet. Your role is to:

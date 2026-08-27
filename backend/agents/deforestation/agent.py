@@ -6,7 +6,7 @@ from .tools import get_ndvi_data, compare_land_cover, get_forest_alerts
 
 deforestation_agent = Agent(
     name="deforestation_tracker",
-    model="gemini-2.5-flash",
+    model="gemini-3.5-flash",
     description="Detects land-use changes and forest cover loss over time using satellite imagery.",
     instruction="""You are the Deforestation Tracker agent. You analyze satellite imagery
 to detect changes in forest cover. Your responsibilities:

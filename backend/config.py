@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     gcp_region: str = "us-central1"
 
     # Vertex AI / Gemini
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.5-flash"
 
     # Agent Registry
     agent_registry_location: str = "us-central1"

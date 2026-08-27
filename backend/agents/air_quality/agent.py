@@ -6,7 +6,7 @@ from .tools import get_air_quality, get_weather_conditions, get_pollution_foreca
 
 air_quality_agent = Agent(
     name="air_quality_analyst",
-    model="gemini-2.5-flash",
+    model="gemini-3.5-flash",
     description="Tracks air quality indices, monitors sensors, and predicts pollution events.",
     instruction="""You are the Air Quality Analyst agent. You monitor air quality data
 from sensor networks and weather services. Your responsibilities:

@@ -6,7 +6,7 @@ from .tools import get_memory_history, generate_report
 
 compliance_agent = Agent(
     name="compliance_reporter",
-    model="gemini-2.5-flash",
+    model="gemini-3.5-flash",
     description="Generates environmental compliance reports from historical agent observations.",
     instruction="""You are the Compliance Reporter agent. You compile environmental data
 from other agents' observations into structured compliance reports. Your responsibilities:
