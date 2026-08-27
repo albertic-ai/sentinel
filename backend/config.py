@@ -12,23 +12,23 @@ class Settings(BaseSettings):
     port: int = 8080
 
     # CORS
-    cors_origins: list[str] = ["http://localhost:3000"]
+    cors_origins: list[str] = []
 
     # Google Cloud
     gcp_project_id: str = ""
-    gcp_region: str = "us-central1"
+    gcp_region: str = ""
 
     # Vertex AI / Gemini
-    gemini_model: str = "gemini-3.5-flash"
+    gemini_model: str = ""
 
     # Agent Registry
-    agent_registry_location: str = "us-central1"
+    agent_registry_location: str = ""
 
     # Memory Bank
     memory_bank_id: str = ""
 
     # Firestore
-    firestore_database: str = "(default)"
+    firestore_database: str = ""
 
     # Environmental Data APIs
     nasa_firms_api_key: str = ""
