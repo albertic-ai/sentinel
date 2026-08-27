@@ -3,7 +3,7 @@ import Link from "next/link";
 export function AppFooter() {
   return (
     <footer className="border-t bg-background py-6">
-      <div className="container mx-auto flex flex-col items-center gap-3 px-4 text-sm text-muted-foreground sm:flex-row sm:justify-between">
+      <div className="container mx-auto flex flex-col items-center gap-3 px-6 text-sm text-muted-foreground sm:flex-row sm:justify-between md:px-8">
         <p>&copy; {new Date().getFullYear()} Sentinel. All rights reserved.</p>
         <nav className="flex flex-wrap justify-center gap-4">
           <Link href="/legal/terms" className="hover:underline">

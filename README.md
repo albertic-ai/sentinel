@@ -4,6 +4,8 @@
 
 Sentinel enables organizations to securely deploy, manage, and monitor specialized AI agents that work autonomously with Earth and environmental data. It provides persistent memory, identity, governance, security, and end-to-end observability for agent fleets operating at scale.
 
+**Live App:** [sentinel-frontend-429151084374.us-central1.run.app](https://sentinel-frontend-429151084374.us-central1.run.app)
+
 Repository: [github.com/albertic-ai/sentinel](https://github.com/albertic-ai/sentinel)
 
 ---
