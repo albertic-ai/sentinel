@@ -78,23 +78,49 @@ _genkit_app = None
 
 
 def _get_genkit():
-    """Initialize GenKit with the Google GenAI plugin, or return None if unavailable."""
+    """Initialize GenKit.
+
+    Uses Vertex AI (GCP credits, no API key) when a project is configured;
+    otherwise falls back to the Gemini API key if provided.
+    Returns None if neither is available.
+    """
     global _genkit_app
     if _genkit_app is not None:
         return _genkit_app
-    if not settings.gemini_api_key:
-        return None
-    try:
-        from genkit.ai import Genkit
-        from genkit.plugins.google_genai import GoogleAI
 
-        _genkit_app = Genkit(
-            plugins=[GoogleAI(api_key=settings.gemini_api_key)],
-            model="googleai/gemini-flash-latest",
-        )
-        return _genkit_app
-    except Exception:
-        return None
+    import logging
+
+    log = logging.getLogger("sentinel.chat")
+
+    # Prefer Vertex AI (uses GCP credits, authenticates via the service account)
+    if settings.gcp_project_id:
+        try:
+            from genkit import Genkit
+            from genkit_google_genai import VertexAI
+
+            _genkit_app = Genkit(
+                plugins=[VertexAI(location=settings.gcp_region or "us-central1")],
+                model="vertexai/gemini-2.5-flash",
+            )
+            return _genkit_app
+        except Exception as exc:  # noqa: BLE001
+            log.error("Vertex AI init failed: %s", exc, exc_info=True)
+
+    # Fallback: Gemini API key
+    if settings.gemini_api_key:
+        try:
+            from genkit import Genkit
+            from genkit_google_genai import GoogleAI
+
+            _genkit_app = Genkit(
+                plugins=[GoogleAI(api_key=settings.gemini_api_key)],
+                model="googleai/gemini-flash-latest",
+            )
+            return _genkit_app
+        except Exception as exc:  # noqa: BLE001
+            log.error("GoogleAI init failed: %s", exc, exc_info=True)
+
+    return None
 
 
 async def generate_reply(agent_name: str, message: str, history: list[dict]) -> dict:
@@ -131,7 +157,10 @@ async def generate_reply(agent_name: str, message: str, history: list[dict]) -> 
         response = await ai.generate(prompt=convo)
         text = getattr(response, "text", None) or DEMO_RESPONSES.get(agent, DEMO_RESPONSES[DEFAULT_AGENT])
         return {"reply": text, "agent": agent, "powered_by": "gemini"}
-    except Exception:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
+        import logging
+
+        logging.getLogger("sentinel.chat").error("Gemini generate failed: %s", exc, exc_info=True)
         # Fall back to a demo response rather than surfacing a raw error
         return {
             "reply": (
