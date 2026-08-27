@@ -1,6 +1,4 @@
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://sentinel-backend-429151084374.us-central1.run.app";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 const TOKEN_KEY = "sentinel_token";
 

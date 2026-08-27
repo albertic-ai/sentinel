@@ -82,10 +82,9 @@ See `.env.example` at root and in each subdirectory for all available variables.
 
 ## Live Demo
 
-Both services are deployed on Google Cloud Run:
+The frontend is deployed on Google Cloud Run:
 
 - **Frontend:** https://sentinel-frontend-429151084374.us-central1.run.app
-- **Backend:** https://sentinel-backend-429151084374.us-central1.run.app
 
 **Demo credentials:**
 
