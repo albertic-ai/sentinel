@@ -36,10 +36,14 @@ sentinel/
 |-------|-----------|
 | Frontend | Next.js 16 (App Router), React, TypeScript, Tailwind CSS v4, shadcn/ui, Lucide React |
 | Backend | Python 3.12, FastAPI, Google ADK |
-| AI Model | Gemini 3.5 Flash via Vertex AI |
+| AI Model | Gemini 3.5 Flash via Vertex AI or Gemini API |
+| Chat | GenKit with connector tools |
+| Auth | JWT (PyJWT) + bcrypt |
 | Infrastructure | Google Cloud (Cloud Run, Firestore, Pub/Sub) |
 | Observability | OpenTelemetry |
 | Font | Google Sans Flex |
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full system architecture and diagrams.
 
 ## Getting Started
 
@@ -119,13 +123,18 @@ gcloud run deploy sentinel-backend --source ./backend --region us-central1 --all
 | `/legal/privacy` | Privacy Policy |
 | `/legal/cookies` | Cookie Policy |
 | `/console/dashboard` | Fleet overview |
+| `/console/chat` | Chat with the agent fleet |
 | `/console/agents` | Agent management |
 | `/console/agents/[name]` | Agent detail |
 | `/console/registry` | Agent Registry browser |
+| `/console/registry/[name]` | Registry entry detail |
 | `/console/memory` | Memory Explorer |
+| `/console/memory/[id]` | Memory entry detail |
 | `/console/observability/logs` | Structured logs |
 | `/console/observability/traces` | Reasoning traces |
+| `/console/observability/traces/[id]` | Trace detail |
 | `/console/connectors` | Data source connections |
+| `/console/connectors/[name]` | Connector detail |
 | `/console/settings/profile` | Profile settings |
 | `/console/settings/organization` | Organization settings |
 | `/console/settings/security` | Security settings |
@@ -152,9 +161,12 @@ gcloud run deploy sentinel-backend --source ./backend --region us-central1 --all
 | `GET /api/observability/audit` | Audit trail |
 | `GET /api/settings/organization` | Organization and members |
 | `GET /api/settings/credentials` | Data source credentials |
+| `GET /api/chat/agents` | List chat agents with suggested prompts |
+| `POST /api/chat/` | Send a message to an agent |
 
 ## Documentation
 
+- [Architecture](docs/ARCHITECTURE.md)
 - [Contributing](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security](SECURITY.md)

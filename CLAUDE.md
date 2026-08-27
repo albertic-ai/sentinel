@@ -21,7 +21,7 @@ sentinel/
 
 - **Frontend:** Next.js 16 (App Router), React, TypeScript, Tailwind CSS v4, shadcn/ui, Lucide React, Google Sans Flex
 - **Backend:** Python 3.12, FastAPI, Google ADK, Pydantic
-- **AI Model:** Gemini 3.5 Flash via Vertex AI
+- **AI Model:** Gemini 3.5 Flash (Vertex AI or Gemini API), GenKit for chat
 - **Infrastructure:** Google Cloud (Cloud Run, Firestore, Pub/Sub)
 - **Observability:** OpenTelemetry → Cloud Trace + Cloud Logging
 

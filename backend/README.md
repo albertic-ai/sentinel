@@ -7,11 +7,21 @@ API and agent orchestration service built with Python, FastAPI, and Google ADK.
 - Python 3.12
 - FastAPI + Uvicorn
 - Google ADK (Agent Development Kit)
-- Gemini 3.5 Flash via Vertex AI
+- GenKit for chat orchestration
+- Gemini 3.5 Flash (via Vertex AI or Gemini API)
 - Google Cloud (Cloud Run, Firestore, Pub/Sub)
 - OpenTelemetry for observability
 - httpx for async HTTP
 - Pydantic for data validation
+
+## Gemini Configuration
+
+The chat feature supports two auth methods, selected via environment variables:
+
+- **Vertex AI** — set `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION`; authenticates via Application Default Credentials (a service account with the `roles/aiplatform.user` role). No API key required.
+- **Gemini API** — set `GEMINI_API_KEY` (from Google AI Studio).
+
+Vertex AI takes priority when a project is configured. If neither is set, chat returns demo responses.
 
 ## Structure
 

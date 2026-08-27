@@ -19,10 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - JWT-based authentication API (login, register, me) with bcrypt password hashing
 - Backend deployed to Cloud Run
 - Frontend deployed to Cloud Run
-- Gemini 3.5 Flash via Vertex AI
+- Gemini 3.5 Flash integration (Vertex AI or Gemini API)
 - Environmental data connectors (NASA FIRMS, OpenAQ, Sentinel Hub, OpenWeather)
 - Demo data across all console endpoints (dashboard, agents, registry, memory, connectors, observability, settings)
 - Console and settings pages wired to live backend API with loading states
+- Detail pages for agents, registry, memory, connectors, and traces with clickable interactions
+- Agent chat interface (`/console/chat`) powered by GenKit + Gemini
+- Chat supports both Vertex AI and Gemini API auth, with demo responses and prompt suggestions
+- Environmental connectors registered as chat tools (NASA FIRMS, OpenAQ, Sentinel Hub, OpenWeather)
+- Architecture documentation with Mermaid diagrams (docs/ARCHITECTURE.md)
 - Root-level documentation: README, LICENSE (MIT), SECURITY, CODE_OF_CONDUCT, CONTRIBUTING, ROADMAP, CHANGELOG
 - Environment variable management (.env.example template, .env.local gitignored)
 - Agent and AI context files (AGENTS.md, CLAUDE.md)
