@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Shield } from "lucide-react";
+import Image from "next/image";
 import { AppFooter } from "@/components/app";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -9,7 +9,7 @@ export default function LegalLayout({ children }: LayoutProps<"/legal">) {
       <header className="sticky top-0 z-50 border-b bg-background">
         <div className="container mx-auto flex h-14 items-center px-4">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Shield className="h-5 w-5" />
+            <Image src="/icons/app/dark.png" alt="Sentinel" width={24} height={24} />
             <span>Sentinel</span>
           </Link>
         </div>
@@ -29,7 +29,7 @@ export default function LegalLayout({ children }: LayoutProps<"/legal">) {
           </nav>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
-        <article className="prose prose-neutral dark:prose-invert max-w-none prose-headings:text-lg md:prose-headings:text-xl">
+        <article className="prose prose-neutral max-w-none prose-headings:text-lg md:prose-headings:text-xl">
           {children}
         </article>
       </div>

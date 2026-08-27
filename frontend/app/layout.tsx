@@ -5,11 +5,14 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sentinel",
   description: "Enterprise Agent Fleet for Environmental Intelligence",
+  icons: {
+    icon: "/icons/app/favicon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className="light h-full antialiased">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

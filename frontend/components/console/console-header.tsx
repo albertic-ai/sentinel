@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Shield, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -50,7 +51,7 @@ export function ConsoleHeader() {
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           <Link href="/console" className="flex items-center gap-2 font-semibold">
-            <Shield className="h-5 w-5" />
+            <Image src="/icons/app/dark.png" alt="Sentinel" width={24} height={24} />
             <span className="hidden sm:inline">Sentinel Console</span>
             <span className="sm:hidden">Sentinel</span>
           </Link>
